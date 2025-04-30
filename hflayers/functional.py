@@ -416,7 +416,9 @@ def hopfield_core_forward(query,                           # type: Tensor
 
         # Compute new xi for Hopfield retrieve iterations.
         if xi is None:
+            print("attn_output_weights---------------------", attn_output_weights.shape, attn_output_weights)
             xi = nn.functional.softmax(attn_output_weights, dim=-1)
+            print("xi---------------------", xi.shape, xi)
         else:
             xi = torch.masked_scatter(input=xi, mask=update_active_heads, source=nn.functional.softmax(
                 attn_output_weights.masked_select(mask=update_active_heads).view(size=(-1, *xi.shape[1:])), dim=-1))
@@ -434,8 +436,8 @@ def hopfield_core_forward(query,                           # type: Tensor
     ####################################################################################################################
     #                                          END HOPFIELD UPDATE ITERATION                                           #
     ####################################################################################################################
-
     attn_output_weights = nn.functional.dropout(xi, p=dropout_p, training=training)
+    print("v---------------------", v.shape)
     attn_output = torch.bmm(attn_output_weights, v)
     assert list(attn_output.shape[:2]) == [bsz * num_heads, tgt_len]
     attn_output = attn_output.transpose(0, 1).contiguous().view(tgt_len, bsz, -1)
@@ -445,6 +447,9 @@ def hopfield_core_forward(query,                           # type: Tensor
 
     xi = xi.view(bsz, num_heads, tgt_len, src_len) if return_raw_associations else None
     v = v.view(bsz, num_heads, src_len, -1) if return_projected_patterns else None
+    print("xi, v-------------------", xi.shape, v.shape)
+    print("xi---------------------", xi)
+    print("dims: bsz, num_heads, tgt_len, src_len -------------------",bsz, num_heads, tgt_len, src_len)
     if need_weights:
         # average attention weights over heads
         attn_output_weights = attn_output_weights.view(bsz, num_heads, tgt_len, src_len)

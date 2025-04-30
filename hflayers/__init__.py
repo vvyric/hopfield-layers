@@ -230,7 +230,7 @@ class Hopfield(Module):
         :return: Hopfield-processed input data
         """
         association_output = self._maybe_transpose(self._associate(
-            data=input, return_raw_associations=False,
+            data=input, return_raw_associations=True, return_projected_patterns=True, #XXX: need further check
             stored_pattern_padding_mask=stored_pattern_padding_mask,
             association_mask=association_mask)[0])
         if self.association_activation is not None:
