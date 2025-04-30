@@ -59,14 +59,14 @@ how to install PyTorch are available on the [official project page](https://pyto
 The recommended way to install the software is to use `pip/pip3`:
 
 ```bash
-$ pip3 install git+git@github.com:vvyric/hopfield-layers.git
+pip3 install git+https://github.com/vvyric/hopfield-layers.git
 ```
 
 To successfully run the [Jupyter notebooks](https://jupyter.org) contained in [examples](examples/), additional
 third-party modules are needed:
 
 ```bash
-$ pip3 install -r examples/requirements.txt
+pip3 install -r examples/requirements.txt
 ```
 
 The installation of the [Jupyter software](https://jupyter.org/install.html) itself is not covered. More details on how
