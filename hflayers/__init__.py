@@ -229,13 +229,19 @@ class Hopfield(Module):
         :param association_mask: mask to be applied on inner association matrix
         :return: Hopfield-processed input data
         """
-        association_output = self._maybe_transpose(self._associate(
+        attn_output, _, Xi, V = self._associate(
             data=input, return_raw_associations=True, return_projected_patterns=True, #XXX: need further check
             stored_pattern_padding_mask=stored_pattern_padding_mask,
-            association_mask=association_mask)[0])
+            association_mask=association_mask)
+
+        association_output = self._maybe_transpose(attn_output)
+        # association_output = self._maybe_transpose(self._associate(
+        #     data=input, return_raw_associations=True, return_projected_patterns=True, #XXX: need further check
+        #     stored_pattern_padding_mask=stored_pattern_padding_mask,
+        #     association_mask=association_mask)[0]) # XXX: problem is here!! return attn_output, None, xi, v, [0] only outputs the 1,1,784
         if self.association_activation is not None:
             association_output = self.association_activation(association_output)
-        return association_output
+        return association_output, Xi
 
     def get_association_matrix(self, input: Union[Tensor, Tuple[Tensor, Tensor, Tensor]],
                                stored_pattern_padding_mask: Optional[Tensor] = None,
