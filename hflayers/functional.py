@@ -398,6 +398,7 @@ def hopfield_core_forward(query,                           # type: Tensor
                     key_padding_mask = nn.functional.pad(key_padding_mask, [0, 1])
 
         attn_output_weights = torch.bmm(q, k.transpose(1, 2))
+        similarity_score = attn_output_weights.clone()
         assert list(attn_output_weights.size()) == [bsz * num_heads, tgt_len, src_len]
 
         if attn_mask is not None:
@@ -453,6 +454,6 @@ def hopfield_core_forward(query,                           # type: Tensor
     if need_weights:
         # average attention weights over heads
         attn_output_weights = attn_output_weights.view(bsz, num_heads, tgt_len, src_len)
-        return attn_output, attn_output_weights.sum(dim=1) / num_heads, xi, v
+        return attn_output, attn_output_weights.sum(dim=1) / num_heads, xi, v, similarity_score
     else:
-        return attn_output, None, xi, v
+        return attn_output, None, xi, v, similarity_score
